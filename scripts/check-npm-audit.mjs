@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
  * Runs `npm audit --omit=dev --audit-level=high` but lets a small, explicitly dated
- * allowlist of advisory IDs pass instead of failing the build. The allowlist starts
- * empty. An entry past its `expires` date makes this script fail until a human renews
+ * allowlist of advisory IDs pass instead of failing the build. Entries are
+ * added only with an owner-approved expiry date. An entry past its `expires` date makes this script fail until a human renews
  * or removes it.
  *
  * Usage: node scripts/check-npm-audit.mjs
@@ -17,7 +17,22 @@ import { execFileSync } from "node:child_process";
 // only (never shipped in the app bundle) and has no upstream fix yet. Every entry
 // needs an `expires` date (YYYY-MM-DD) so it is re-reviewed, e.g.:
 //   { id: "GHSA-xxxx-xxxx-xxxx", package: "pkg", expires: "2027-01-01", reason: "..." }
-const ALLOWLIST = [];
+const ALLOWLIST = [
+  {
+    id: "GHSA-86w9-cpqp-85rv",
+    package: "node-forge",
+    expires: "2026-11-09",
+    reason:
+      "RSA PKCS#1 v1.5 signature-verification bypass. Reached only via Expo's own build tooling (@expo/cli -> @expo/code-signing-certificates); never part of the app bundle. No patched release as of 2026-10-10. Re-check for a fix before the expiry date, then delete or renew.",
+  },
+  {
+    id: "GHSA-vfj7-8cjw-p6xm",
+    package: "braces",
+    expires: "2026-11-09",
+    reason:
+      "Stack-exhaustion DoS in braces <= 3.0.3. Reached only via Metro/micromatch and Expo build tooling; never shipped in the app bundle. No patched release as of 2026-10-10. Re-check for a fix before the expiry date, then delete or renew.",
+  },
+];
 
 function todayUtc() {
   return new Date().toISOString().slice(0, 10);
