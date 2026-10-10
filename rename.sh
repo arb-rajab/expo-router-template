@@ -31,4 +31,4 @@ if [ -f package-lock.json ]; then
   sed -i -e "0,/\"name\": \"starterapp\"/s//\"name\": \"${SLUG}\"/" package-lock.json
 fi
 echo "Renamed to ${NAME} (${SLUG}, ${APP_ID}). Review with: git diff"
-echo "Fill in LICENSE ([YEAR] [COPYRIGHT HOLDER]) and delete this script when done."
+echo "Update the copyright line in LICENSE for your project and delete this script when done."
